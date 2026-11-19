@@ -9,12 +9,12 @@
   :root {
     --bg: #f6f7f9; --surface: #fff; --text: #16202c; --muted: #5b6776;
     --line: #e2e6eb; --accent: #0b5fff; --accent-ink: #fff;
-    --board: #101820; --board-text: #ffd34d; --ok: #1a7f37; --warn: #b35900; --bad: #c62828;
+   
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #0e1319; --surface: #161d26; --text: #e7ecf2; --muted: #98a4b3;
-      --line: #263140; --accent: #5b9bff; --accent-ink: #0e1319; --board: #05080c;
-      --ok: #4cc06a; --warn: #f0a050; --bad: #ff6b6b; }
+      --line: #263140; --accent: #5b9bff; --accent-ink: #0e1319;
+      }
   }
   * { box-sizing: border-box; }
   body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -36,15 +36,6 @@
   .hero h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.15; margin: 0 0 8px; }
   .hero p { color: var(--muted); margin: 0; max-width: 620px; }
 
-  .board { background: var(--board); color: var(--board-text); border-radius: 14px; padding: 18px 20px;
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; margin: 24px 0 8px; overflow-x: auto; }
-  .board-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; color: #fff; }
-  .board-head b { font-size: 15px; letter-spacing: .08em; }
-  #clock { font-size: 26px; color: var(--board-text); }
-  .board table { width: 100%; border-collapse: collapse; min-width: 480px; }
-  .board th { text-align: left; font-weight: 400; color: #8a97a8; font-size: 12px; text-transform: uppercase; padding: 4px 8px; }
-  .board td { padding: 7px 8px; border-top: 1px solid #1f2a36; font-size: 16px; }
-  .board .st { font-size: 13px; }
 
   section { padding: 32px 0; }
   h2 { font-size: 24px; margin: 0 0 16px; }
@@ -60,11 +51,12 @@
   .sched td.t { font-variant-numeric: tabular-nums; font-weight: 600; }
   .days { color: var(--muted); font-size: 14px; }
   .empty { color: var(--muted); padding: 16px 8px; }
+  .note { color: var(--muted); font-size: 14px; margin: 14px 0 0; }
   @media (max-width: 640px) {
     .sched thead { display: none; }
-    .sched tr { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .sched tr { display: grid; grid-template-columns: 1fr; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--line); }
     .sched td { border: 0; padding: 0; }
-    .sched td.t { grid-row: span 4; font-size: 18px; }
+    .sched td.t { font-weight: 600; }
   }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
@@ -80,7 +72,7 @@
 </head>
 <body>
 
-<div class="demo"><div class="wrap">Демо-версія: розклад, адреса й телефони вигадані, замініть їх реальними даними перед публікацією.</div></div>
+<div class="demo"><div class="wrap">Дані зібрано з відкритих джерел (листопад 2026). Розклад змінюється — перед поїздкою уточнюйте в довідковій.</div></div>
 
 <header>
   <div class="wrap bar">
@@ -88,59 +80,50 @@
       <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#0b5fff"/><path d="M10 12h20a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2zm0 3v5h20v-5zm2 9a1.5 1.5 0 1 0 0 .01zm16 0a1.5 1.5 0 1 0 0 .01z" fill="#fff"/></svg>
       Автовокзал Берестин
     </a>
-    <nav><a href="#schedule">Розклад</a><a href="#tickets">Квитки</a><a href="#info">Пасажирам</a><a href="#contacts">Контакти</a></nav>
+    <nav><a href="#schedule">Напрямки</a><a href="#tickets">Квитки</a><a href="#info">Пасажирам</a><a href="#contacts">Контакти</a></nav>
   </div>
 </header>
 
 <main class="wrap">
   <div class="hero">
     <h1>Приміські та міжміські рейси з Берестина</h1>
-    <p>Актуальний розклад відправлень, правила продажу квитків і довідкова інформація для пасажирів.</p>
+    <p>Напрямки та відомі відправлення, де купити квиток, адреса й телефони автостанції.</p>
 
-    <div class="board" aria-live="polite">
-      <div class="board-head"><b>НАЙБЛИЖЧІ ВІДПРАВЛЕННЯ</b><span id="clock">--:--</span></div>
-      <table>
-        <thead><tr><th>Час</th><th>Напрямок</th><th>Платформа</th><th>Статус</th></tr></thead>
-        <tbody id="board"></tbody>
-      </table>
     </div>
-  </div>
 
   <section id="schedule">
-    <h2>Розклад рейсів</h2>
+    <h2>Напрямки та відомі відправлення</h2>
     <div class="card">
       <div class="filters">
         <input id="q" type="search" placeholder="Куди їдете? Напр. Харків" aria-label="Пошук напрямку">
-        <select id="day" aria-label="День тижня">
-          <option value="all">Усі дні</option>
-          <option value="today" selected>Сьогодні</option>
-          <option value="1">Понеділок</option><option value="2">Вівторок</option><option value="3">Середа</option>
-          <option value="4">Четвер</option><option value="5">Пʼятниця</option><option value="6">Субота</option><option value="0">Неділя</option>
-        </select>
       </div>
       <table class="sched">
-        <thead><tr><th>Відправлення</th><th>Маршрут</th><th>Прибуття</th><th>Ціна</th><th>Дні</th></tr></thead>
+        <thead><tr><th>Напрямок</th><th>Відправлення з Берестина</th><th>Ціна</th><th>Перевізник</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
+      <p class="note">Час відправлення орієнтовний: його зібрано з сайтів продажу квитків, і він може відрізнятися залежно від дня. Актуальний розклад і наявність місць дивіться онлайн:
+        <a href="https://inbus.ua/station/berestin-180400013700" rel="noopener">inBus</a>,
+        <a href="https://bus.tickets.ua/direction/krasnograd/harkov" rel="noopener">bus.tickets.ua</a>,
+        <a href="https://ukrpas.ua/bus-schedule/krasnohrad" rel="noopener">Ukrpas</a>,
+        <a href="https://avtobys.in.ua/kharkivska/berestyn" rel="noopener">онлайн-табло</a>.</p>
     </div>
   </section>
 
   <section id="tickets">
     <h2>Квитки</h2>
     <div class="grid">
-      <div class="card"><h3>У касі</h3><p>Каса працює щодня з 05:30 до 19:00. Продаж квитків починається за 10 днів до відправлення.</p></div>
-      <div class="card"><h3>У водія</h3><p>На приміських рейсах квиток можна придбати у водія за наявності вільних місць.</p></div>
-      <div class="card"><h3>Пільги</h3><p>Пільговий проїзд за посвідченням. Діти до 5 років без окремого місця — безкоштовно.</p></div>
-      <div class="card"><h3>Повернення</h3><p>Повернення квитка в касі не пізніше ніж за 2 години до відправлення, з утриманням збору.</p></div>
+      <div class="card"><h3>У касі автостанції</h3><p>Квитки на рейси, що відправляються з Берестина, продаються в касі автостанції на вул. Полтавській, 91.</p></div>
+      <div class="card"><h3>Онлайн</h3><p>Квитки на більшість міжміських рейсів можна купити на сайтах <a href="https://inbus.ua/station/berestin-180400013700" rel="noopener">inBus</a>, <a href="https://bus.tickets.ua/direction/krasnograd/harkov" rel="noopener">bus.tickets.ua</a> та <a href="https://ukrpas.ua/bus-schedule/krasnohrad" rel="noopener">Ukrpas</a>.</p></div>
+      <div class="card"><h3>У водія</h3><p>На приміських і транзитних рейсах квиток зазвичай можна придбати у водія за наявності вільних місць.</p></div>
     </div>
   </section>
 
   <section id="info">
     <h2>Пасажирам</h2>
     <div class="grid">
-      <div class="card"><h3>Багаж</h3><ul><li>Ручна поклажа — безкоштовно</li><li>Великий багаж — за окремим квитком</li></ul></div>
-      <div class="card"><h3>На вокзалі</h3><ul><li>Зал очікування</li><li>Камера схову</li><li>Укриття</li><li>Вбиральня</li></ul></div>
-      <div class="card"><h3>Під час тривоги</h3><p>Відправлення рейсів може затримуватися. Пройдіть до укриття та слідкуйте за оголошеннями диспетчера.</p></div>
+      <div class="card"><h3>Про місто</h3><p>Берестин — місто в Харківській області. До 2024 року мало назву Красноград, тож у розкладах і на квитках автостанцію часто позначають як «Красноград АС».</p></div>
+      <div class="card"><h3>Зупинка «Пост»</h3><p>Частина транзитних рейсів зупиняється не на автостанції, а на зупинці «Пост» на трасі М-18 (Е-105). Уточнюйте місце посадки під час купівлі квитка.</p></div>
+      <div class="card"><h3>Під час тривоги</h3><p>Відправлення рейсів може затримуватися. Пройдіть до найближчого укриття та слідкуйте за оголошеннями.</p></div>
     </div>
   </section>
 
@@ -148,68 +131,42 @@
     <h2>Контакти</h2>
     <div class="card">
       <dl>
-        <dt>Адреса</dt><dd>м. Берестин, вул. [вкажіть адресу]</dd>
-        <dt>Довідкова</dt><dd><a href="tel:+380000000000">+38 (000) 000-00-00</a></dd>
-        <dt>Каса</dt><dd>щодня 05:30–19:00</dd>
-        <dt>Диспетчер</dt><dd>цілодобово</dd>
+        <dt>Адреса</dt><dd>вул. Полтавська, 91, м. Берестин (Красноград), Харківська обл., 63304</dd>
+        <dt>Довідкова</dt><dd><a href="tel:+380574470900">+38 (05744) 7-09-00</a></dd>
+        <dt>Мобільний</dt><dd><a href="tel:+380634902821">+38 (063) 490-28-21</a></dd>
+        <dt>Час роботи</dt><dd>уточнюйте за телефоном довідкової</dd>
       </dl>
     </div>
   </section>
 </main>
 
-<footer><div class="wrap">© Автовокзал Берестин. Розклад може змінюватися — уточнюйте в довідковій.</div></footer>
+<footer><div class="wrap">Неофіційний інформаційний сайт. Розклад може змінюватися — уточнюйте в довідковій або в перевізника.</div></footer>
 
 <script>
-// Демо-розклад. days: 0 = неділя … 6 = субота.
-const ALL = [0,1,2,3,4,5,6], WORK = [1,2,3,4,5];
+// Дані з відкритих джерел (сайти продажу квитків), листопад 2026.
 const ROUTES = [
-  { dep: "05:50", to: "Харків",        arr: "07:40", price: 180, days: ALL,  pl: 1 },
-  { dep: "06:30", to: "Полтава",       arr: "08:50", price: 210, days: ALL,  pl: 2 },
-  { dep: "07:15", to: "Кегичівка",     arr: "08:20", price: 85,  days: WORK, pl: 3 },
-  { dep: "08:00", to: "Харків",        arr: "09:50", price: 180, days: ALL,  pl: 1 },
-  { dep: "08:40", to: "Зачепилівка",   arr: "09:25", price: 60,  days: ALL,  pl: 4 },
-  { dep: "09:30", to: "Дніпро",        arr: "12:40", price: 320, days: ALL,  pl: 2 },
-  { dep: "10:20", to: "Сахновщина",    arr: "11:30", price: 90,  days: [1,3,5], pl: 3 },
-  { dep: "11:00", to: "Нова Водолага", arr: "12:00", price: 75,  days: ALL,  pl: 4 },
-  { dep: "12:10", to: "Харків",        arr: "14:00", price: 180, days: ALL,  pl: 1 },
-  { dep: "13:30", to: "Лозова",        arr: "15:20", price: 150, days: [2,4,6], pl: 3 },
-  { dep: "14:45", to: "Полтава",       arr: "17:05", price: 210, days: ALL,  pl: 2 },
-  { dep: "15:40", to: "Кегичівка",     arr: "16:45", price: 85,  days: ALL,  pl: 3 },
-  { dep: "16:20", to: "Харків",        arr: "18:10", price: 180, days: ALL,  pl: 1 },
-  { dep: "17:30", to: "Зачепилівка",   arr: "18:15", price: 60,  days: WORK, pl: 4 },
-  { dep: "21:00", to: "Київ",          arr: "05:30", price: 650, days: [0,5], pl: 2 },
+  { to: "Харків",       times: "12:30, 17:10",         price: "від 250 грн",  carrier: "АВТОЕКСПРЕС-ДНІПРО та інші" },
+  { to: "Полтава",      times: "перший 07:40, останній 19:40", price: "від 260 грн", carrier: "різні" },
+  { to: "Дніпро",       times: "06:30, 12:25",         price: "від 299 грн",  carrier: "АВТОЕКСПРЕС-ДНІПРО та інші" },
+  { to: "Київ",         times: "10:40 (прибуття 16:25)", price: "від 1287 грн", carrier: "різні" },
+  { to: "Лозова",       times: "уточнюйте",            price: "—",            carrier: "ФОП Карнаух В.М." },
+  { to: "Карлівка",     times: "уточнюйте",            price: "—",            carrier: "«Костянтинівське АТП 11409», ПУАТ" },
+  { to: "Павлоград",    times: "уточнюйте",            price: "—",            carrier: "ПП «АВТОЕКСПРЕС-ДНІПРО»" },
+  { to: "Берестовенька", times: "уточнюйте",           price: "—",            carrier: "—" },
+  { to: "Одеса",        times: "уточнюйте (є рейси з пересадкою)", price: "—", carrier: "різні" },
+  { to: "Львів",        times: "уточнюйте",            price: "від 1210 грн", carrier: "різні" },
 ];
-const DAY = ["Нд","Пн","Вт","Ср","Чт","Пт","Сб"];
 const $ = id => document.getElementById(id);
-const mins = t => { const [h, m] = t.split(":"); return h * 60 + +m; };
-const daysText = d => d.length === 7 ? "щодня" : d.join() === WORK.join() ? "пн–пт" : d.map(i => DAY[i]).join(", ");
-
-function renderSchedule() {
+function render() {
   const q = $("q").value.trim().toLowerCase();
-  const sel = $("day").value;
-  const day = sel === "today" ? new Date().getDay() : +sel;
-  const list = ROUTES.filter(r => r.to.toLowerCase().includes(q) && (sel === "all" || r.days.includes(day)));
+  const list = ROUTES.filter(r => r.to.toLowerCase().includes(q));
   $("rows").innerHTML = list.length ? list.map(r => `
-    <tr><td class="t">${r.dep}</td><td>Берестин → <b>${r.to}</b></td><td>${r.arr}</td>
-    <td>${r.price} грн</td><td class="days">${daysText(r.days)}</td></tr>`).join("")
-    : `<tr><td class="empty" colspan="5">Рейсів не знайдено</td></tr>`;
+    <tr><td>Берестин → <b>${r.to}</b></td><td class="t">${r.times}</td>
+    <td>${r.price}</td><td class="days">${r.carrier}</td></tr>`).join("")
+    : `<tr><td class="empty" colspan="4">Напрямок не знайдено — уточніть у довідковій</td></tr>`;
 }
-
-function renderBoard() {
-  const now = new Date(), cur = now.getHours() * 60 + now.getMinutes();
-  $("clock").textContent = now.toLocaleTimeString("uk-UA", { hour: "2-digit", minute: "2-digit" });
-  const next = ROUTES.filter(r => r.days.includes(now.getDay()) && mins(r.dep) >= cur - 5).slice(0, 5);
-  $("board").innerHTML = next.length ? next.map(r => {
-    const left = mins(r.dep) - cur;
-    const [txt, col] = left <= 0 ? ["відправляється", "var(--bad)"] : left <= 15 ? ["посадка", "var(--ok)"] : ["за розкладом", "#8a97a8"];
-    return `<tr><td>${r.dep}</td><td>${r.to.toUpperCase()}</td><td>${r.pl}</td><td class="st" style="color:${col}">${txt}</td></tr>`;
-  }).join("") : `<tr><td colspan="4">На сьогодні рейсів більше немає</td></tr>`;
-}
-
-$("q").addEventListener("input", renderSchedule);
-$("day").addEventListener("change", renderSchedule);
-renderSchedule(); renderBoard();
-setInterval(renderBoard, 30000);
+$("q").addEventListener("input", render);
+render();
 </script>
 </body>
 </html>
