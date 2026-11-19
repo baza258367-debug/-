@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Автовокзал Берестин</title>
+<meta name="description" content="Розклад рейсів, квитки та інформація для пасажирів автовокзалу міста Берестин.">
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #fff; --text: #16202c; --muted: #5b6776;
+    --line: #e2e6eb; --accent: #0b5fff; --accent-ink: #fff;
+   
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0e1319; --surface: #161d26; --text: #e7ecf2; --muted: #98a4b3;
+      --line: #263140; --accent: #5b9bff; --accent-ink: #0e1319;
+      }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--text); }
+  a { color: var(--accent); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+  .demo { background: #fff4d6; color: #5a4300; font-size: 14px; padding: 8px 0; text-align: center; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; flex-wrap: wrap; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; text-decoration: none; color: var(--text); }
+  .logo svg { width: 34px; height: 34px; }
+  nav a { margin-left: 18px; text-decoration: none; color: var(--muted); font-weight: 500; }
+  nav a:hover { color: var(--accent); }
+  @media (max-width: 640px) { nav a { margin: 0 14px 0 0; } }
+
+  .hero { padding: 40px 0 24px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.15; margin: 0 0 8px; }
+  .hero p { color: var(--muted); margin: 0; max-width: 620px; }
+
+
+  section { padding: 32px 0; }
+  h2 { font-size: 24px; margin: 0 0 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+
+  .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .filters input, .filters select { font: inherit; padding: 10px 12px; border: 1px solid var(--line);
+    border-radius: 10px; background: var(--surface); color: var(--text); }
+  .filters input { flex: 1 1 220px; }
+  .sched { width: 100%; border-collapse: collapse; }
+  .sched th, .sched td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+  .sched th { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .sched td.t { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .days { color: var(--muted); font-size: 14px; }
+  .empty { color: var(--muted); padding: 16px 8px; }
+  .note { color: var(--muted); font-size: 14px; margin: 14px 0 0; }
+  @media (max-width: 640px) {
+    .sched thead { display: none; }
+    .sched tr { display: grid; grid-template-columns: 1fr; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .sched td { border: 0; padding: 0; }
+    .sched td.t { font-weight: 600; }
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .grid h3 { margin: 0 0 6px; font-size: 17px; }
+  .grid p, .grid li { color: var(--muted); margin: 0; }
+  .grid ul { padding-left: 18px; margin: 0; }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; margin: 0; }
+  dt { color: var(--muted); }
+  dd { margin: 0; font-weight: 500; }
+
+  footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; padding: 24px 0 40px; }
+</style>
+</head>
+<body>
+
+<div class="demo"><div class="wrap">Дані зібрано з відкритих джерел (листопад 2026). Розклад змінюється — перед поїздкою уточнюйте в довідковій.</div></div>
+
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#0b5fff"/><path d="M10 12h20a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2zm0 3v5h20v-5zm2 9a1.5 1.5 0 1 0 0 .01zm16 0a1.5 1.5 0 1 0 0 .01z" fill="#fff"/></svg>
+      Автовокзал Берестин
+    </a>
+    <nav><a href="#schedule">Напрямки</a><a href="#tickets">Квитки</a><a href="#info">Пасажирам</a><a href="#contacts">Контакти</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Приміські та міжміські рейси з Берестина</h1>
+    <p>Напрямки та відомі відправлення, де купити квиток, адреса й телефони автостанції.</p>
+
+    </div>
+
+  <section id="schedule">
+    <h2>Напрямки та відомі відправлення</h2>
+    <div class="card">
+      <div class="filters">
+        <input id="q" type="search" placeholder="Куди їдете? Напр. Харків" aria-label="Пошук напрямку">
+      </div>
+      <table class="sched">
+        <thead><tr><th>Напрямок</th><th>Відправлення з Берестина</th><th>Ціна</th><th>Перевізник</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <p class="note">Час відправлення орієнтовний: його зібрано з сайтів продажу квитків, і він може відрізнятися залежно від дня. Актуальний розклад і наявність місць дивіться онлайн:
+        <a href="https://inbus.ua/station/berestin-180400013700" rel="noopener">inBus</a>,
+        <a href="https://bus.tickets.ua/direction/krasnograd/harkov" rel="noopener">bus.tickets.ua</a>,
+        <a href="https://ukrpas.ua/bus-schedule/krasnohrad" rel="noopener">Ukrpas</a>,
+        <a href="https://avtobys.in.ua/kharkivska/berestyn" rel="noopener">онлайн-табло</a>.</p>
+    </div>
+  </section>
+
+  <section id="tickets">
+    <h2>Квитки</h2>
+    <div class="grid">
+      <div class="card"><h3>У касі автостанції</h3><p>Квитки на рейси, що відправляються з Берестина, продаються в касі автостанції на вул. Полтавській, 91.</p></div>
+      <div class="card"><h3>Онлайн</h3><p>Квитки на більшість міжміських рейсів можна купити на сайтах <a href="https://inbus.ua/station/berestin-180400013700" rel="noopener">inBus</a>, <a href="https://bus.tickets.ua/direction/krasnograd/harkov" rel="noopener">bus.tickets.ua</a> та <a href="https://ukrpas.ua/bus-schedule/krasnohrad" rel="noopener">Ukrpas</a>.</p></div>
+      <div class="card"><h3>У водія</h3><p>На приміських і транзитних рейсах квиток зазвичай можна придбати у водія за наявності вільних місць.</p></div>
+    </div>
+  </section>
+
+  <section id="info">
+    <h2>Пасажирам</h2>
+    <div class="grid">
+      <div class="card"><h3>Про місто</h3><p>Берестин — місто в Харківській області. До 2024 року мало назву Красноград, тож у розкладах і на квитках автостанцію часто позначають як «Красноград АС».</p></div>
+      <div class="card"><h3>Зупинка «Пост»</h3><p>Частина транзитних рейсів зупиняється не на автостанції, а на зупинці «Пост» на трасі М-18 (Е-105). Уточнюйте місце посадки під час купівлі квитка.</p></div>
+      <div class="card"><h3>Під час тривоги</h3><p>Відправлення рейсів може затримуватися. Пройдіть до найближчого укриття та слідкуйте за оголошеннями.</p></div>
+    </div>
+  </section>
+
+  <section id="contacts">
+    <h2>Контакти</h2>
+    <div class="card">
+      <dl>
+        <dt>Адреса</dt><dd>вул. Полтавська, 91, м. Берестин (Красноград), Харківська обл., 63304</dd>
+        <dt>Довідкова</dt><dd><a href="tel:+380574470900">+38 (05744) 7-09-00</a></dd>
+        <dt>Мобільний</dt><dd><a href="tel:+380634902821">+38 (063) 490-28-21</a></dd>
+        <dt>Час роботи</dt><dd>уточнюйте за телефоном довідкової</dd>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Неофіційний інформаційний сайт. Розклад може змінюватися — уточнюйте в довідковій або в перевізника.</div></footer>
+
+<script>
+// Дані з відкритих джерел (сайти продажу квитків), листопад 2026.
+const ROUTES = [
+  { to: "Харків",       times: "12:30, 17:10",         price: "від 250 грн",  carrier: "АВТОЕКСПРЕС-ДНІПРО та інші" },
+  { to: "Полтава",      times: "перший 07:40, останній 19:40", price: "від 260 грн", carrier: "різні" },
+  { to: "Дніпро",       times: "06:30, 12:25",         price: "від 299 грн",  carrier: "АВТОЕКСПРЕС-ДНІПРО та інші" },
+  { to: "Київ",         times: "10:40 (прибуття 16:25)", price: "від 1287 грн", carrier: "різні" },
+  { to: "Лозова",       times: "уточнюйте",            price: "—",            carrier: "ФОП Карнаух В.М." },
+  { to: "Карлівка",     times: "уточнюйте",            price: "—",            carrier: "«Костянтинівське АТП 11409», ПУАТ" },
+  { to: "Павлоград",    times: "уточнюйте",            price: "—",            carrier: "ПП «АВТОЕКСПРЕС-ДНІПРО»" },
+  { to: "Берестовенька", times: "уточнюйте",           price: "—",            carrier: "—" },
+  { to: "Одеса",        times: "уточнюйте (є рейси з пересадкою)", price: "—", carrier: "різні" },
+  { to: "Львів",        times: "уточнюйте",            price: "від 1210 грн", carrier: "різні" },
+];
+const $ = id => document.getElementById(id);
+function render() {
+  const q = $("q").value.trim().toLowerCase();
+  const list = ROUTES.filter(r => r.to.toLowerCase().includes(q));
+  $("rows").innerHTML = list.length ? list.map(r => `
+    <tr><td>Берестин → <b>${r.to}</b></td><td class="t">${r.times}</td>
+    <td>${r.price}</td><td class="days">${r.carrier}</td></tr>`).join("")
+    : `<tr><td class="empty" colspan="4">Напрямок не знайдено — уточніть у довідковій</td></tr>`;
+}
+$("q").addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
